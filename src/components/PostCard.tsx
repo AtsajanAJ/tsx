@@ -25,17 +25,12 @@ interface Props {
   content: string;
   followings: number;
   followers: number;
+  handleEdit?: () => void;
   handleDelete?: () => void;
 }
 
 export default function PostCard(props: Props) {
   const [isFollowed, setIsFollowed] = React.useState(false);
-
-  const handleDelete = () => {
-    if (props.handleDelete) {
-      props.handleDelete();
-    }
-  }
 
   return (
     <Card className="max-w-[340px]">
@@ -78,8 +73,8 @@ export default function PostCard(props: Props) {
               <EllipsisVertical size={16} />
             </DropdownTrigger>
             <DropdownMenu aria-label="Static Actions">
-              <DropdownItem key="edit">Edit</DropdownItem>
-              <DropdownItem key="delete" className="text-danger" color="danger" onClick={handleDelete}>
+              <DropdownItem key="edit" onClick={props.handleEdit}>Edit</DropdownItem>
+              <DropdownItem key="delete" className="text-danger" color="danger" onClick={props.handleDelete}>
                 Delete
               </DropdownItem>
             </DropdownMenu>

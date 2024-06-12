@@ -2,64 +2,92 @@ import ConfirmModal from "@/components/ConfirmModal";
 import CreatePostModal from "@/components/CreatePostModal";
 import MyNavbar from "@/components/Navbar";
 import PostCard from "@/components/PostCard";
+import UpdatePostModal from "@/components/UpdatePostModal";
+import usePostStates from "@/hooks/usePostStates";
+import postService from "@/services/post-service";
 import { Post } from "@/types";
-import {
-  Button,
-  useDisclosure,
-} from "@nextui-org/react";
-import { useState } from "react";
-
-// justify -> แกนหลัก
-// items -> แกนรอง
-
-const DEFAULT_POSTS = [
-  {
-    author: {
-      avatar:
-        "https://play-lh.googleusercontent.com/jA5PwYqtmoFS7StajBe2EawN4C8WDdltO68JcsrvYKSuhjcTap5QMETkloXSq5soqRBqFjuTAhh28AYrA6A=w240-h480-rw",
-      name: "Tanakorn Karode",
-      username: "tanakorn_karode",
-    },
-    content: "Hello My name is Sainy!",
-    followings: 10,
-    followers: 20,
-  },
-];
-
-// [1,2,3,4,5]
-
-// Spread operator
-// Create Read Update Delete
+import { Button, useDisclosure } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [posts, setPosts] = useState(DEFAULT_POSTS);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const selectedPostStates = usePostStates();
+
   const createPostDisclosure = useDisclosure();
   const confirmModalDisclosure = useDisclosure();
+  const updatePostDisclosure = useDisclosure();
 
   const handleDelete = (index: number) => {
     confirmModalDisclosure.onOpen();
     setSelectedIndex(index);
   };
 
-  const handleConfirmDelete = () => {
-    const filtered = posts.filter((_, index) => {
-      return index !== selectedIndex;
-    });
+  const handleEdit = (index: number) => {
+    updatePostDisclosure.onOpen();
+    setSelectedIndex(index);
+    selectedPostStates.setContent(posts[index].content);
+    selectedPostStates.setAvatar(posts[index].author.avatar);
+    selectedPostStates.setName(posts[index].author.name);
+    selectedPostStates.setUsername(posts[index].author.username);
+    selectedPostStates.setFollowings(posts[index].followings);
+    selectedPostStates.setFollowers(posts[index].followers);
+  };
 
-    setPosts(filtered);
+  const handleConfirmDelete = async () => {
+    // const filtered = posts.filter((_, index) => {
+    //   return index !== selectedIndex;
+    // });
+
+    // setPosts(filtered);
+    await postService.deletePost(selectedIndex);
+    await refreshPostsFromServer();
+
+    confirmModalDisclosure.onClose();
+  };
+
+  const handleConfirmUpdate = async () => {
+    const updatedPost = {
+      author: {
+        avatar: selectedPostStates.avatar,
+        name: selectedPostStates.name,
+        username: selectedPostStates.username,
+      },
+      content: selectedPostStates.content,
+      followings: selectedPostStates.followings,
+      followers: selectedPostStates.followers,
+    };
+
+    await postService.updatePost(selectedIndex, updatedPost);
+    await refreshPostsFromServer();
+
+    updatePostDisclosure.onClose();
   };
 
   const handleCreatePost = () => {
     createPostDisclosure.onOpen();
-  }
+  };
 
-  const createPost = (post: Post) => {
-    setPosts([...posts, post])
+  const createPost = async (post: Post) => {
+    // setPosts([...posts, post]);
+    await postService.createPost(post);
+    await refreshPostsFromServer();
     createPostDisclosure.onClose();
-  }
+  };
+
+  const refreshPostsFromServer = async () => {
+    const posts = await postService.fetchPosts();
+    setPosts(posts);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const posts = await postService.fetchPosts();
+      setPosts(posts);
+    })();
+  }, []);
 
   return (
     <main className=" h-[100vh]">
@@ -71,12 +99,13 @@ export default function Home() {
             <PostCard
               key={index}
               {...item}
+              handleEdit={() => handleEdit(index)}
               handleDelete={() => handleDelete(index)}
             />
           );
         })}
       </div>
-      
+
       <div className="fixed right-20 bottom-10">
         <Button
           radius="full"
@@ -96,6 +125,12 @@ export default function Home() {
         isOpen={confirmModalDisclosure.isOpen}
         onOpenChange={confirmModalDisclosure.onOpenChange}
         onDelete={handleConfirmDelete}
+      />
+      <UpdatePostModal
+        isOpen={updatePostDisclosure.isOpen}
+        onOpenChange={updatePostDisclosure.onOpenChange}
+        onSubmit={handleConfirmUpdate}
+        {...selectedPostStates}
       />
     </main>
   );
