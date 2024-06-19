@@ -12,6 +12,8 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import { Post } from "@/types";
+import { useSession } from "next-auth/react";
+import useUserData from "@/hooks/useUserData";
 
 interface Props {
   isOpen?: boolean;
@@ -21,18 +23,21 @@ interface Props {
 
 export default function CreatePostModal(props: Props) {
   const [content, setContent] = useState("");
-  const [avatar, setAvatar] = useState("");
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+  // const [avatar, setAvatar] = useState("");
+  // const [name, setName] = useState("");
+  // const [username, setUsername] = useState("");
   const [followings, setFollowings] = useState(0);
   const [followers, setFollowers] = useState(0);
+
+
+  const { email, image, name  } = useUserData();
 
   const handleClick = () => {
     const singlePost = {
       author: {
-        avatar,
-        name,
-        username,
+        avatar: image || "",
+        name: name || "",
+        username: email || "",
       },
       content, //content: content
       followings,
@@ -44,13 +49,13 @@ export default function CreatePostModal(props: Props) {
     }
   };
 
-  const handleChangeUsername: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setUsername(e.target.value);
-  };
+  // const handleChangeUsername: ChangeEventHandler<HTMLInputElement> = (e) => {
+  //   setUsername(e.target.value);
+  // };
 
-  const handleChangeName: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setName(e.target.value);
-  };
+  // const handleChangeName: ChangeEventHandler<HTMLInputElement> = (e) => {
+  //   setName(e.target.value);
+  // };
 
   const handleChangeFollowings: ChangeEventHandler<HTMLInputElement> = (e) => {
     setFollowings(Number(e.target.value));
@@ -64,19 +69,19 @@ export default function CreatePostModal(props: Props) {
     setContent(e.target.value);
   };
 
-  const handleSelectFile: ChangeEventHandler<HTMLInputElement> = (e) => {
-    if (e.target.files) {
-      const file = e.target.files[0];
+  // const handleSelectFile: ChangeEventHandler<HTMLInputElement> = (e) => {
+  //   if (e.target.files) {
+  //     const file = e.target.files[0];
 
-      const fileReader = new FileReader();
+  //     const fileReader = new FileReader();
 
-      fileReader.onload = (result) => {
-        setAvatar(fileReader.result as string);
-      };
+  //     fileReader.onload = (result) => {
+  //       setAvatar(fileReader.result as string);
+  //     };
 
-      fileReader.readAsDataURL(file);
-    }
-  };
+  //     fileReader.readAsDataURL(file);
+  //   }
+  // };
 
   return (
     <div>
@@ -89,7 +94,7 @@ export default function CreatePostModal(props: Props) {
               </ModalHeader>
               <ModalBody className="text-black">
                 <div className="flex flex-col items-center pb-2">
-                  <div>
+                  {/* <div>
                     <div className="flex justify-center mb-2">
                       <label htmlFor="avatar-upload" className="cursor-pointer">
                         <Avatar src={avatar} size="lg" />
@@ -112,7 +117,7 @@ export default function CreatePostModal(props: Props) {
                       label="Username"
                       onChange={handleChangeUsername}
                     />
-                  </div>
+                  </div> */}
 
                   <Textarea
                     rows={10}
