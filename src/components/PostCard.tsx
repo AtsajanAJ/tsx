@@ -25,12 +25,32 @@ interface Props {
   content: string;
   followings: number;
   followers: number;
+  disableEdit?: boolean;
+  disableDelete?: boolean;
   handleEdit?: () => void;
   handleDelete?: () => void;
 }
 
 export default function PostCard(props: Props) {
   const [isFollowed, setIsFollowed] = React.useState(false);
+
+  const showMenu = !props.disableEdit || !props.disableDelete;
+
+  const items = [
+    {
+      key: "edit",
+      label: "Edit",
+    },
+    {
+      key: "delete",
+      label: "Delete",
+    },
+  ].filter((item) => {
+    if (item.key === "edit") {
+      return !props.disableEdit
+    }
+    return !props.disableDelete;
+  })
 
   return (
     <Card className="max-w-[340px]">
@@ -68,18 +88,25 @@ export default function PostCard(props: Props) {
             {isFollowed ? "Unfollow" : "Follow"}
           </Button>
 
-          <Dropdown className="text-black">
-            <DropdownTrigger>
-              <EllipsisVertical size={16} />
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Static Actions">
-              <DropdownItem key="edit" onClick={props.handleEdit}>Edit</DropdownItem>
-              <DropdownItem key="delete" className="text-danger" color="danger" onClick={props.handleDelete}>
-                Delete
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-          
+          {showMenu && (
+            <Dropdown className="text-black">
+              <DropdownTrigger>
+                <EllipsisVertical size={16} />
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Static Actions" items={items}>
+                {(item) => (
+                  <DropdownItem
+                    key={item.key}
+                    color={item.key === "delete" ? "danger" : "default"}
+                    className={item.key === "delete" ? "text-danger" : ""}
+                    onClick={item.key === "delete" ? props.handleDelete : props.handleEdit}
+                  >
+                    {item.label}
+                  </DropdownItem>
+                )}
+              </DropdownMenu>
+            </Dropdown>
+          )}
         </div>
       </CardHeader>
       <CardBody className="px-3 py-0 text-small text-default-400">

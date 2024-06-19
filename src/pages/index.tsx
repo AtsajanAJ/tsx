@@ -4,6 +4,7 @@ import MyNavbar from "@/components/Navbar";
 import PostCard from "@/components/PostCard";
 import UpdatePostModal from "@/components/UpdatePostModal";
 import usePostStates from "@/hooks/usePostStates";
+import useUserData from "@/hooks/useUserData";
 import postService from "@/services/post-service";
 import { Post } from "@/types";
 import { Button, useDisclosure } from "@nextui-org/react";
@@ -11,8 +12,9 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
+  useSession({ required: true });
 
-  useSession({ required: true })
+  const { email } = useUserData();
 
   const [posts, setPosts] = useState<Post[]>([]);
 
@@ -105,6 +107,8 @@ export default function Home() {
               {...item}
               handleEdit={() => handleEdit(index)}
               handleDelete={() => handleDelete(index)}
+              disableDelete={email !== item.author.username}
+              disableEdit={email !== item.author.username}
             />
           );
         })}
