@@ -1,18 +1,22 @@
 import React from "react";
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar} from "@nextui-org/react";
-import { signOut, useSession } from "next-auth/react";
-// import {AcmeLogo} from "./AcmeLogo.jsx";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  DropdownItem,
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  Avatar,
+} from "@nextui-org/react";
+import { signOut } from "next-auth/react";
+import useUserData from "@/hooks/useUserData";
 
 // Normal function
 export default function MyNavbar() {
-
-  const session = useSession();
-
-  const data = session.data;
-  const email = (data && data.user && data.user.email) ? data.user.email : null;
-  const image = (data && data.user && data.user.image) ? data.user.image : null;
-
-  console.log(image);
+  const { image, email } = useUserData();
 
   return (
     <Navbar>
@@ -53,11 +57,20 @@ export default function MyNavbar() {
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile" className="h-14 gap-2 text-black" textValue="email">
+            <DropdownItem
+              key="profile"
+              className="h-14 gap-2 text-black"
+              textValue="email"
+            >
               <p className="font-semibold">Signed in as</p>
               <p className="font-semibold">{email}</p>
             </DropdownItem>
-            <DropdownItem key="logout" className="text-black" color="danger" onClick={() => signOut()}>
+            <DropdownItem
+              key="logout"
+              className="text-black"
+              color="danger"
+              onClick={() => signOut()}
+            >
               Log Out
             </DropdownItem>
           </DropdownMenu>
