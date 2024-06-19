@@ -7,9 +7,13 @@ import usePostStates from "@/hooks/usePostStates";
 import postService from "@/services/post-service";
 import { Post } from "@/types";
 import { Button, useDisclosure } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
+
+  useSession({ required: true })
+
   const [posts, setPosts] = useState<Post[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
