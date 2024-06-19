@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  useSession({ required: true });
+  const session = useSession({ required: true });
 
   const { email } = useUserData();
 

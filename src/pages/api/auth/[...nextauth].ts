@@ -8,6 +8,7 @@ export const authOptions = {
     GoogleProvider({
       clientId: config.GOOGLE_CLIENT_ID,
       clientSecret: config.GOOGLE_CLIENT_SECRET,
+      idToken: true
     }),
   ],
 };
