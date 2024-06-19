@@ -26,11 +26,16 @@ const deletePost = async (id: number) => {
   return response.data;
 };
 
+const setAccessToken = (accessToken: string) => {
+  axios.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
+}
+
 const postService = {
   fetchPosts,
   createPost,
   updatePost,
   deletePost,
+  setAccessToken
 };
 
 export default postService;

@@ -48,10 +48,13 @@ export default function Home() {
     // });
 
     // setPosts(filtered);
-    await postService.deletePost(selectedIndex);
-    await refreshPostsFromServer();
+    if (session.data?.accessToken) {
+      postService.setAccessToken(session.data?.accessToken);
+      await postService.deletePost(selectedIndex);
+      await refreshPostsFromServer();
 
-    confirmModalDisclosure.onClose();
+      confirmModalDisclosure.onClose();
+    }
   };
 
   const handleConfirmUpdate = async () => {
@@ -107,8 +110,8 @@ export default function Home() {
               {...item}
               handleEdit={() => handleEdit(index)}
               handleDelete={() => handleDelete(index)}
-              disableDelete={email !== item.author.username}
-              disableEdit={email !== item.author.username}
+              // disableDelete={email !== item.author.username}
+              // disableEdit={email !== item.author.username}
             />
           );
         })}
