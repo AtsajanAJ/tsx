@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const session = useSession({ required: true });
-
+  
   const { email } = useUserData();
 
   const [posts, setPosts] = useState<Post[]>([]);

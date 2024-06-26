@@ -11,8 +11,12 @@ export const authOptions: AuthOptions = {
       clientSecret: config.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  secret: config.NEXTAUTH_SECRET,
+  pages: {
+    signIn: '/signIn'
+  },
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ account, token}) {
       if ( account ) {
         token.accessToken = account.id_token;
       }
