@@ -10,3 +10,7 @@ export interface Post {
   followings: number;
   followers: number;
 }
+
+export interface PostDTO { // DTO = Data Transfer Object
+  content: string;
+}

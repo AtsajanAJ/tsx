@@ -1,5 +1,5 @@
 import { config } from "@/config";
-import { Post } from "@/types";
+import { Post, PostDTO } from "@/types";
 import axios from "axios";
 
 const fetchPosts = async () => {
@@ -8,7 +8,7 @@ const fetchPosts = async () => {
   return response.data;
 };
 
-const createPost = async (data: Post) => {
+const createPost = async (data: PostDTO) => {
   const url = `${config.API_URL}/posts`;
   const response = await axios.post(url, data);
   return response.data;

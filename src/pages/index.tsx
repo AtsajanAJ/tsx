@@ -5,7 +5,7 @@ import PostCard from "@/components/PostCard";
 import UpdatePostModal from "@/components/UpdatePostModal";
 import usePostStates from "@/hooks/usePostStates";
 import postService from "@/services/post-service";
-import { Post } from "@/types";
+import { Post, PostDTO } from "@/types";
 import { Button, useDisclosure } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -68,7 +68,7 @@ export default function Home() {
     createPostDisclosure.onOpen();
   };
 
-  const createPost = async (post: Post) => {
+  const createPost = async (post: PostDTO) => {
     await postService.createPost(post);
     await refreshPostsFromServer();
     createPostDisclosure.onClose();

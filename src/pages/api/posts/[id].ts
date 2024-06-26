@@ -98,7 +98,7 @@ export default function handler(
     case "PUT":
       return handleUpdatePost(req, res);
     case "DELETE":
-      handleDeletePost(req, res);
+      return handleDeletePost(req, res);
     default:
       return "Error";
   }

@@ -11,37 +11,24 @@ import {
   Input,
   Textarea,
 } from "@nextui-org/react";
-import { Post } from "@/types";
+import { PostDTO } from "@/types";
 import { useSession } from "next-auth/react";
 import useUserData from "@/hooks/useUserData";
 
 interface Props {
   isOpen?: boolean;
   onOpenChange?: (isOpen: boolean) => void;
-  onSubmit?: (post: Post) => void;
+  onSubmit?: (post: PostDTO) => void;
 }
 
 export default function CreatePostModal(props: Props) {
   const [content, setContent] = useState("");
-  // const [avatar, setAvatar] = useState("");
-  // const [name, setName] = useState("");
-  // const [username, setUsername] = useState("");
   const [followings, setFollowings] = useState(0);
   const [followers, setFollowers] = useState(0);
 
-
-  const { email, image, name  } = useUserData();
-
   const handleClick = () => {
     const singlePost = {
-      author: {
-        avatar: image || "",
-        name: name || "",
-        username: email || "",
-      },
-      content, //content: content
-      followings,
-      followers,
+      content
     };
 
     if (props.onSubmit) {
