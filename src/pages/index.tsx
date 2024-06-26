@@ -4,7 +4,6 @@ import MyNavbar from "@/components/Navbar";
 import PostCard from "@/components/PostCard";
 import UpdatePostModal from "@/components/UpdatePostModal";
 import usePostStates from "@/hooks/usePostStates";
-import useUserData from "@/hooks/useUserData";
 import postService from "@/services/post-service";
 import { Post } from "@/types";
 import { Button, useDisclosure } from "@nextui-org/react";
@@ -13,8 +12,6 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const session = useSession({ required: true });
-  
-  const { email } = useUserData();
 
   const [posts, setPosts] = useState<Post[]>([]);
 
@@ -43,18 +40,10 @@ export default function Home() {
   };
 
   const handleConfirmDelete = async () => {
-    // const filtered = posts.filter((_, index) => {
-    //   return index !== selectedIndex;
-    // });
+    await postService.deletePost(selectedIndex);
+    await refreshPostsFromServer();
 
-    // setPosts(filtered);
-    if (session.data?.accessToken) {
-      postService.setAccessToken(session.data?.accessToken);
-      await postService.deletePost(selectedIndex);
-      await refreshPostsFromServer();
-
-      confirmModalDisclosure.onClose();
-    }
+    confirmModalDisclosure.onClose();
   };
 
   const handleConfirmUpdate = async () => {
@@ -80,7 +69,6 @@ export default function Home() {
   };
 
   const createPost = async (post: Post) => {
-    // setPosts([...posts, post]);
     await postService.createPost(post);
     await refreshPostsFromServer();
     createPostDisclosure.onClose();
@@ -97,6 +85,12 @@ export default function Home() {
       setPosts(posts);
     })();
   }, []);
+
+  useEffect(() => {
+    if (session.data?.accessToken) {
+      postService.setAccessToken(session.data?.accessToken);
+    }
+  }, [session]);
 
   return (
     <main className=" h-[100vh]">
